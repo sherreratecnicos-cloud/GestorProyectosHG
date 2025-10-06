@@ -33,17 +33,17 @@ jobs:
         with:
           ruby-version: '3.2'
 
-      - name: Install bundler and gems
+      - name: Install Fastlane via Bundler
         run: |
+          cd Fastlane
           gem install bundler
-          bundle init || true
-          cd Fastlane || true
-          bundle install || gem install fastlane
+          bundle install --path vendor/bundle
 
       - name: Run fastlane ci_build
         run: |
-          cd $GITHUB_WORKSPACE
+          cd Fastlane
           bundle exec fastlane ci_build
+
 
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
