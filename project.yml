@@ -1,0 +1,21 @@
+name: GestorProyectosHG
+options:
+  bundleIdPrefix: es.hg
+  deploymentTarget:
+    iOS: '15.0'
+configs:
+  Debug: debug
+  Release: release
+targets:
+  GestorProyectosHG:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    bundleId: es.hg.gestorproyectos
+    settings:
+      INFO_PLIST_FILE: Sources/GestorProyectosHG/Info.plist
+    sources:
+      - path: Sources/GestorProyectosHG
+    scheme:
+      name: GestorProyectosHG
+      testTargets: []

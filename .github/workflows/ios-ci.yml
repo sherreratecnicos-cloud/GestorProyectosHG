@@ -1,0 +1,52 @@
+name: iOS CI (XcodeGen + Fastlane)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    env:
+      LC_ALL: "en_US.UTF-8"
+      LANG: "en_US.UTF-8"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install Homebrew (if needed) and XcodeGen
+        run: |
+          # macOS hosted runner has brew; ensure xcodegen is installed
+          brew list xcodegen || brew install xcodegen
+
+      - name: Generate Xcode project (XcodeGen)
+        run: |
+          xcodegen generate --spec project.yml
+
+      - name: Set up Ruby (fastlane)
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+
+      - name: Install bundler and gems
+        run: |
+          gem install bundler
+          bundle init || true
+          cd Fastlane || true
+          bundle install || gem install fastlane
+
+      - name: Run fastlane ci_build
+        run: |
+          cd $GITHUB_WORKSPACE
+          bundle exec fastlane ci_build
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-ipa
+          path: build/*.ipa
