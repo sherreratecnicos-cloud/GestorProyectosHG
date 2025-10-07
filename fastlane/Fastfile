@@ -3,20 +3,9 @@ default_platform(:ios)
 platform :ios do
   desc "Build IPA without signing"
   lane :ci_build do
-    build_app(
-      project: "GestorProyectosHG.xcodeproj",
-      scheme: "GestorProyectosHG",
-      clean: true,
-      export_method: "ad-hoc", # puede ser 'development' o 'ad-hoc'
-      export_options: {
-        compileBitcode: false,
-        signingStyle: "manual",
-        signingCertificate: "-",
-        provisioningProfiles: {}
-      },
-      export_xcargs: "-allowProvisioningUpdates CODE_SIGN_IDENTITY=\"\" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO",
-      output_directory: "./build",
-      output_name: "GestorProyectosHG.ipa"
-    )
+    sh "xcodebuild -project GestorProyectosHG.xcodeproj -scheme GestorProyectosHG -sdk iphoneos -configuration Release clean build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY='' DEVELOPMENT_TEAM=''"
+
+    sh "mkdir -p build/ipa"
+    sh "xcodebuild -exportArchive -archivePath build/GestorProyectosHG.xcarchive -exportPath build/ipa -exportOptionsPlist ExportOptions.plist || true"
   end
 end
