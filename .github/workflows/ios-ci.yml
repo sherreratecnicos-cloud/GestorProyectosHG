@@ -35,13 +35,13 @@ jobs:
 
       - name: Install Fastlane via Bundler
         run: |
-          cd Fastlane
+          cd fastlane
           gem install bundler
           bundle install --path vendor/bundle
 
       - name: Run fastlane ci_build
         run: |
-          cd Fastlane
+          cd fastlane
           bundle exec fastlane ci_build
 
 
