@@ -1,33 +1,22 @@
 default_platform(:ios)
 
 platform :ios do
-  desc "CI build: generate .ipa unsigned (for CI/testing). Uses xcodebuild export with exportOptionsPlist for ad-hoc if provided."
+  desc "Build IPA without signing"
   lane :ci_build do
-    # Generate project (if using XcodeGen this should already be run in CI prior to fastlane)
-    # increment_build_number(xcodeproj: "GestorProyectosHG.xcodeproj")
     build_app(
-      workspace: nil,
       project: "GestorProyectosHG.xcodeproj",
       scheme: "GestorProyectosHG",
       clean: true,
-      export_method: "ad-hoc",
+      export_method: "ad-hoc", # puede ser 'development' o 'ad-hoc'
       export_options: {
-        compileBitcode: false
+        compileBitcode: false,
+        signingStyle: "manual",
+        signingCertificate: "-",
+        provisioningProfiles: {}
       },
+      export_xcargs: "-allowProvisioningUpdates CODE_SIGN_IDENTITY=\"\" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO",
       output_directory: "./build",
-      export_xcargs: "-allowProvisioningUpdates"
+      output_name: "GestorProyectosHG.ipa"
     )
-  end
-
-  desc "Release to TestFlight (requires signing: App Store Connect API key or certificates configured in CI)"
-  lane :release do
-    capture_screenshots
-    build_app(
-      project: "GestorProyectosHG.xcodeproj",
-      scheme: "GestorProyectosHG",
-      export_method: "app-store",
-      output_directory: "./build"
-    )
-    upload_to_testflight
   end
 end
